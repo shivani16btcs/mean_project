@@ -1,1 +1,1 @@
-# mean_project
+# MEAN_PROJECT
