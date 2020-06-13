@@ -1,0 +1,51 @@
+<app-header-not-login></app-header-not-login>
+
+<app-forget-popup *ngIf="emailsend === true"></app-forget-popup>
+
+<div class="container">
+  <div class="content">
+    <div class="content_rgt">
+      <div class="register_sec">
+        <h1>Forgot Password</h1>
+        <ul>
+          <form [formGroup]="form" (ngSubmit)="Doforget(f.email)">
+            <li>
+              <span>Enter E-mail ID</span>
+              <input
+                type="text"
+                placeholder="User@gmail.com"
+                required
+                pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                class="form-control"
+                formControlName="email"
+              />
+              <mat-error *ngIf="f.email.touched && !f.email.valid">
+                <mat-error *ngIf="f.email.errors.required"
+                  >* email is required</mat-error
+                >
+                <mat-error *ngIf="f.email.errors.pattern"
+                  >* email is not valid</mat-error
+                >
+              </mat-error>
+            </li>
+            <li>
+              <input type="submit" [disabled]="!form.valid" value="Submit" />
+            </li>
+          </form>
+        </ul>
+      </div>
+    </div>
+    <div class="content_lft">
+      <h1>Welcome from PPL!</h1>
+      <p class="discrptn">
+        There are many variations of passages of Lorem Ipsum available, but the
+        majority have suffered alteration in some form, by injected humour, or
+        randomised words which don't look even slightly believable. If you are
+        going to use a passage of Lorem Ipsum, you need to be sure there isn't
+        anything embarrassing hidden in the middle of text.
+      </p>
+      <img src="../assets/images/img_9.png" alt="" />
+    </div>
+  </div>
+</div>
+<div class="clear"></div>
