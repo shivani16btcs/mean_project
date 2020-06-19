@@ -1,5 +1,5 @@
 
-=======================================
+
 ## FOR RUN
 1) for run : first run "npm i "
 2) do "cd backend"
