@@ -1,0 +1,13 @@
+input[type="file"]{
+  visibility:hidden;
+}
+
+main {
+  width: 80%;
+  margin: 1rem auto;
+}
+
+
+
+
+
