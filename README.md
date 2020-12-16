@@ -15,10 +15,15 @@ do post request at postman:
 
 
 1)select POST
+
 2)type url :   localhost:1234/register
+
 3)below select body
+
 4)inside body select raw
+
 5) the select , input type : JSON
+
 {
   "userName": "shivani16b3@gmail.com",
   "firstName": "Shivani",
