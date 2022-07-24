@@ -1,22 +1,20 @@
 <app-header-not-login></app-header-not-login>
-
 <div class="container">
   <div class="content">
     <div class="content_rgt">
       <div class="register_sec">
         <h1>Create An Account</h1>
         <ul>
-          <form [formGroup]="form"
-            (ngSubmit)="registerUser(f.Username,f.email,f.password,f.Cpassword,f.firstname,f.lastname)">
+          <form [formGroup]="registerForm">
             <li>
               <span>Username</span>
-              <input type="text" placeholder="Enter your username" required minlength="5" formControlName="Username"
+              <input type="text" placeholder="Enter your username" required minlength="3" formControlName="userName"
                 class="form-control">
-              <mat-error *ngIf="f.Username.touched && !f.Username.valid">
-                <mat-error *ngIf="f.Username.errors.required"> * Username is required
+              <mat-error>
+                <mat-error *ngIf="hasError('required', 'userName')"> * required
                 </mat-error>
-                <mat-error *ngIf="f.Username.errors.minlength ">* Username should be of atleast
-                  {{f.Username.errors.minlength.requiredLength}} character
+                <mat-error *ngIf="hasError('minlength', 'userName')">* Username should be of atleast
+                  3 character
                 </mat-error>
               </mat-error>
             </li>
@@ -24,16 +22,28 @@
             <li>
               <span>Password</span>
               <input type="text" placeholder="Enter your password" required minlength="8" maxlength="20"
-                pattern='((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,30})' formControlName="password" class="form-control">
-              <mat-error *ngIf="f.password.touched && !f.password.valid">
-                <mat-error *ngIf="f.password.errors.required">* password is required
+                formControlName="password" class="form-control">
+              <mat-error>
+                <mat-error *ngIf="hasError('required', 'password')">* required
                 </mat-error>
                 <br>
-                <mat-error>
-                  * password must be aphanumeric and must contain atleast one lower and one upper letter;
-                </mat-error>
-                <mat-error *ngIf="f.password.errors.minlength ">* password length must contain atleast
-                  {{f.password.errors.minlength.requiredLength}} character
+                <mat-error *ngIf="hasError('pattern', 'password')">
+                  * password must contain
+                  <div [ngClass]="registerForm.controls.password.value.length>7 ? 'text-green' : 'text-red'"> at least 8
+                    characters</div>
+                  <div
+                    [ngClass]="isStringContains(registerForm.controls.password.value, 'number') ? 'text-green' : 'text-red'">
+                    at
+                    least 1 numeric character</div>
+                  <div
+                    [ngClass]="isStringContains(registerForm.controls.password.value, 'lowercase') ? 'text-green' : 'text-red'">
+                    at least 1 lowercase letter</div>
+                  <div
+                    [ngClass]="isStringContains(registerForm.controls.password.value, 'uppercase') ? 'text-green' : 'text-red'">
+                    at least 1 uppercase letter</div>
+                  <div
+                    [ngClass]="isStringContains(registerForm.controls.password.value, 'special') ? 'text-green' : 'text-red'">
+                    at least 1 special character</div>
                 </mat-error>
               </mat-error>
             </li>
@@ -41,18 +51,9 @@
             <li>
               <span>Confirm Password</span>
               <input type="text" placeholder="Enter your password" required minlength="8" maxlength="20"
-                pattern='((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,30})' formControlName="Cpassword" class="form-control">
-              <mat-error *ngIf="f.Cpassword.touched && !f.Cpassword.valid">
-                <mat-error *ngIf="f.Cpassword.errors.required">* password is required
-                </mat-error>
-                <br>
-                <mat-error>
-                  * password must be aphanumeric and must contain atleast one lower and one upper letter;
-                </mat-error>
-                <mat-error *ngIf="f.Cpassword.errors.minlength ">* password length must contain atleast
-                  {{f.Cpassword.errors.minlength.requiredLength}} character
-                </mat-error>
-                <mat-error *ngIf="f.Cpassword.errors.mismatch">
+                class="form-control" #Cpassword>
+              <mat-error>
+                <mat-error *ngIf="formSubmitted && Cpassword.value != registerForm.controls.password.value">
                   * password and confirm password does not match
                 </mat-error>
               </mat-error>
@@ -61,44 +62,42 @@
 
             <li>
               <span>Email</span>
-              <input type="text" placeholder="enter your email" required
-                pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" class="form-control" formControlName="email">
-              <mat-error *ngIf="f.email.touched && !f.email.valid">
-                <mat-error *ngIf="f.email.errors.required">* email is required</mat-error>
-                <mat-error *ngIf="f.email.errors.pattern">* email is not valid</mat-error>
+              <input type="text" placeholder="enter your email" required class="form-control" formControlName="email">
+              <mat-error>
+                <mat-error *ngIf="hasError('required', 'email')">* required</mat-error>
+                <mat-error *ngIf="hasError('email', 'email')">* email is not valid</mat-error>
               </mat-error>
             </li>
 
             <li>
               <span>First Name</span>
               <input type="text" placeholder="Enter your first name" required minlength="2" maxlength="10"
-                formControlName="firstname" class="form-control">
-              <mat-error *ngIf="f.firstname.touched && !f.firstname.valid">
-                <mat-error *ngIf="f.firstname.errors.required"> * firstname is required
-                </mat-error>
-                <mat-error *ngIf="f.firstname.errors.minlength ">* firstname should be of atleast
-                  {{f.firstname.errors.minlength.requiredLength}} character
+                formControlName="firstName" class="form-control">
+              <mat-error>
+                <mat-error *ngIf="hasError('required', 'firstName')"> * required
                 </mat-error>
               </mat-error>
             </li>
 
             <li>
               <span>Last Name</span>
-              <input type="text" placeholder="Enter your last name" formControlName="lastname" class="form-control">
+              <input type="text" placeholder="Enter your last name" formControlName="lastName" class="form-control">
+              <mat-error>
+                <mat-error *ngIf="hasError('required', 'lastName')"> * required
+                </mat-error>
+              </mat-error>
             </li>
 
             <li>
-              <input type="checkbox" checked="checked" required formControlName="termscheck" class="form-control">
+              <input type="checkbox" required formControlName="termCheck">
               I agree to Term & Conditions
             </li>
-            <mat-error *ngIf="f.termscheck.touched && !f.termscheck.valid">
-              <mat-error *ngIf="f.termscheck.errors.required">
-                * please check this checkbox if you want to proceed
-              </mat-error>
+            <mat-error *ngIf="formSubmitted && !registerForm.controls.termCheck.value">
+              * please check this checkbox if you want to proceed
             </mat-error>
 
             <li>
-              <input type="submit" [disabled]="!form.valid" value="Register">
+              <input type="submit" value="Register" (click)="registerUser()">
 
             </li>
           </form>

@@ -2,7 +2,7 @@ import { Component, } from '@angular/core';
 import { RegisterService } from '../shared/register.service';
 import { NotificationService } from '../shared/notification.service';
 import { Router } from '@angular/router';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-register',
@@ -10,47 +10,67 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
-
+  formSubmitted: boolean = false;
   constructor(private registerService: RegisterService,
     private notifyService: NotificationService,
+    private formBuilder: FormBuilder,
     private router: Router) { }
 
 
   ngOnInit(): void { }
 
-  form = new FormGroup({
+  registerForm = this.formBuilder.group({
     userName: new FormControl('', [Validators.required, Validators.minLength(3)]),
     email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', Validators.required),
-    firstname: new FormControl('', Validators.required),
-    lastname: new FormControl('', Validators.required),
-    termscheck: new FormControl('', Validators.required),
+    password: new FormControl('', [Validators.required, Validators.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/)]),
+    firstName: new FormControl('', Validators.required),
+    lastName: new FormControl('', Validators.required),
+    termCheck: new FormControl(false, Validators.required)
   });
 
   get f() {
-    return this.form.controls;
+    return this.registerForm.controls;
   }
 
-  registerUser(Username, email, password, Cpassword, firstname, lastname) {
-    console.log(this.form.controls)
-    if (password.value !== Cpassword.value) {
-      this.notifyService.showError("password and confirm password must be same !!");
+
+  /**
+   * Function to check for error
+   */
+  hasError(type: string, key: string) {
+    return this.formSubmitted && this.registerForm.hasError(type, [key]);
+  }
+
+  isStringContains(str, check) {
+    if (check == 'number') {
+      return /\d/.test(str);
+    } else if (check == 'lowercase') {
+      return (/[a-z]/.test(str));
+    } else if (check === "uppercase") {
+      return (/[A-Z]/.test(str));
+    } else if (check === "special") {
+      return (/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(str));
+    }
+  }
+
+  registerUser() {
+    this.formSubmitted = true;
+    console.log(this.registerForm.valid)
+    if (!this.registerForm.valid) {
+      return
     }
     else {
       this.registerService.DoRegistration
         ({
-          userName: Username.value,
-          firstName: firstname.value,
-          lastName: lastname.value,
-          email: email.value,
-          password: password.value
+          userName: this.registerForm.controls.userName.value,
+          firstName: this.registerForm.controls.firstName.value,
+          lastName: this.registerForm.controls.lastName.value,
+          email: this.registerForm.controls.email.value,
+          password: this.registerForm.controls.password.value
         }).subscribe(data => {
           this.notifyService.showSuccess("registered successfully !!");
-          console.log(data);
-          this.router.navigate(['login']);
+          this.navigatetologin()
         }, (error) => {
           this.notifyService.showError("registeration failed !!");
-          console.log(error);
         })
     }
   }
